@@ -128,7 +128,7 @@ fun SetupScreen(
                         modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
                     )
                     
-                    val setupCmd = "pkg update -y && pkg install -y nodejs git python && npm install -g nodemon && git clone https://github.com/hostpanel-dev/control-plane.git ~/hostpanel-control-plane && cd ~/hostpanel-control-plane && npm install && cp .env.example .env && node index.js"
+                    val setupCmd = "pkg update -y && pkg install -y nodejs git python && git clone https://github.com/abdullahab98/hostpanel.git ~/hostpanel && cd ~/hostpanel/control-plane && npm install && cp ../.env.example .env && node index.js"
                     
                     OutlinedButton(
                         onClick = {
