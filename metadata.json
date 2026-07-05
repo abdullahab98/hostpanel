@@ -1,0 +1,6 @@
+{
+  "name": "Pocket Host",
+  "description": "Host static websites directly from your phone. Upload a zip file and start a local web server instantly.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
