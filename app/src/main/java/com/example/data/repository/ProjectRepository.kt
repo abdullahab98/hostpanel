@@ -5,6 +5,7 @@ import com.example.data.api.ControlPlaneApi
 import com.example.data.api.WebSocketManager
 import com.example.data.datastore.SettingsDataStore
 import com.example.data.db.AppDatabase
+import com.example.data.db.ProjectEntity
 import com.example.data.model.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

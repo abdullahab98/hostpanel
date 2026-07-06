@@ -110,10 +110,10 @@ fun TerminalScreen() {
         AndroidView(
             factory = { ctx ->
                 WebView(ctx).apply {
-                    settings.javaScriptEnabled = true
-                    settings.domStorageEnabled = true
-                    settings.useWideViewPort = true
-                    settings.loadWithOverviewMode = true
+                    this.settings.javaScriptEnabled = true
+                    this.settings.domStorageEnabled = true
+                    this.settings.useWideViewPort = true
+                    this.settings.loadWithOverviewMode = true
                     
                     webViewClient = WebViewClient()
                     webChromeClient = object : WebChromeClient() {
