@@ -25,10 +25,18 @@ module.exports = function auth(req, res, next) {
 function verifyToken(token) {
   if (!token) return false;
   try {
-    // Simple API-key mode: token matches JWT_SECRET directly
-    if (token === (process.env.JWT_SECRET || 'local-phone-key')) return true;
+    const validKeys = [
+      process.env.API_SECRET,
+      process.env.JWT_SECRET,
+      'hostpanel-local',
+      'local-phone-key'
+    ].filter(Boolean);
+
+    // Simple API-key mode: token matches any valid secret/default key
+    if (validKeys.includes(token)) return true;
+
     // Otherwise verify as a signed JWT
-    jwt.verify(token, process.env.JWT_SECRET || 'local-phone-key');
+    jwt.verify(token, process.env.JWT_SECRET || 'hostpanel-local');
     return true;
   } catch {
     return false;

@@ -12,9 +12,14 @@ const { logAudit } = require('../services/auditService');
 // Verify token for webhooks via query param
 function verifyWebhookToken(req, res, next) {
   const token = req.query.token;
-  const expectedToken = process.env.JWT_SECRET || 'local-phone-key';
+  const validTokens = [
+    process.env.API_SECRET,
+    process.env.JWT_SECRET,
+    'hostpanel-local',
+    'local-phone-key'
+  ].filter(Boolean);
   
-  if (token !== expectedToken) {
+  if (!validTokens.includes(token)) {
     return res.status(401).json({ error: 'Unauthorized webhook token' });
   }
   next();

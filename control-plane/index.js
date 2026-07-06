@@ -55,9 +55,9 @@ const PORT = process.env.PORT || 3001;
 
 // Initialize DB then start
 initDb().then(() => {
-  server.listen(PORT, () => {
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`\n🚀 HostPanel Control Plane v3.0 (Android Native)`);
-    console.log(`   Listening on port ${PORT}`);
+    console.log(`   Listening on port ${PORT} (0.0.0.0)`);
     console.log(`   Projects dir: ${process.env.PROJECTS_DIR || '~/hostpanel-projects'}\n`);
   });
 }).catch(err => {
