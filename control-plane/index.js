@@ -59,10 +59,21 @@ if (PORT === 3000) {
 
 // Initialize DB then start
 initDb().then(() => {
-  server.listen(PORT, () => {
+  // 1. Bind IPv4 explicitly (guarantees Java/Kotlin App VM can connect via 127.0.0.1)
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`\n🚀 HostPanel Control Plane v3.0 (Android Native)`);
-    console.log(`   Listening on port ${PORT} (dual-stack IPv4/IPv6)`);
-    console.log(`   Projects dir: ${process.env.PROJECTS_DIR || '~/hostpanel-projects'}\n`);
+    console.log(`   Listening on IPv4 0.0.0.0:${PORT}`);
+    console.log(`   Projects dir: ${process.env.PROJECTS_DIR || '~/hostpanel-projects'}`);
+  });
+
+  // 2. Bind IPv6 explicitly with ipv6Only: true (guarantees Termux CLI can connect via ::1 without EADDRINUSE)
+  const serverV6 = http.createServer(app);
+  const wssV6 = new WebSocketServer({ server: serverV6 });
+  setupTerminalWebSocket(wssV6);
+  serverV6.listen({ port: PORT, host: '::', ipv6Only: true }, () => {
+    console.log(`   Listening on IPv6 :::${PORT}\n`);
+  }).on('error', () => {
+    // Ignore if IPv6 is disabled on kernel
   });
 }).catch(err => {
   console.error('Failed to initialize database:', err);
