@@ -40,15 +40,13 @@ router.post('/domains', auth, async (req, res) => {
     return res.status(400).json({ error: 'domain and projectName are required' });
   }
   try {
-    // Update the project's domain field in the DB
-    const db = require('../services/processService');
-    // We use processService's SQLite DB directly
-    const Database = require('better-sqlite3');
+    // Use processService's JSON store directly
+    const JsonStore = require('../services/jsonStore');
     const path = require('path');
     const dbPath = path.join(process.env.PROJECTS_DIR || `${process.env.HOME}/hostpanel-projects`, 'processes.db');
-    const sqlite = new Database(dbPath);
-    sqlite.prepare('UPDATE processes SET domain=? WHERE name=?').run(domain, projectName);
-    sqlite.close();
+    const store = new JsonStore(dbPath);
+    store.prepare('UPDATE processes SET domain=? WHERE name=?').run(domain, projectName);
+    store.close();
 
     await logAudit('domain_add', domain, `Linked to project: ${projectName}`);
     res.json({
@@ -67,12 +65,12 @@ router.post('/domains', auth, async (req, res) => {
 // DELETE /api/domains/:domain — remove a custom domain
 router.delete('/domains/:domain', auth, async (req, res) => {
   try {
-    const Database = require('better-sqlite3');
+    const JsonStore = require('../services/jsonStore');
     const path = require('path');
     const dbPath = path.join(process.env.PROJECTS_DIR || `${process.env.HOME}/hostpanel-projects`, 'processes.db');
-    const sqlite = new Database(dbPath);
-    sqlite.prepare("UPDATE processes SET domain=NULL WHERE domain=?").run(req.params.domain);
-    sqlite.close();
+    const store = new JsonStore(dbPath);
+    store.prepare("UPDATE processes SET domain=NULL WHERE domain=?").run(req.params.domain);
+    store.close();
 
     await logAudit('domain_remove', req.params.domain, 'Domain removed');
     res.json({ success: true, message: `${req.params.domain} removed` });

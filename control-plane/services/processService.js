@@ -16,7 +16,7 @@ const fs = require('fs');
 const fsp = require('fs').promises;
 const path = require('path');
 const net = require('net');
-const Database = require('better-sqlite3');
+const Database = require('./jsonStore');
 
 const PROJECTS_DIR = process.env.PROJECTS_DIR || `${process.env.HOME}/hostpanel-projects`;
 const DB_PATH = path.join(PROJECTS_DIR, 'processes.db');

@@ -9,7 +9,7 @@
  *   - status  : 'SUCCESS' | 'FAILURE' | 'INFO' (defaults to 'SUCCESS')
  */
 
-const Database = require('better-sqlite3');
+const Database = require('./jsonStore');
 const path = require('path');
 const { randomUUID } = require('crypto');
 

@@ -6,18 +6,10 @@
 const { spawn, execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const Database = require('better-sqlite3');
+// No SQLite dependency needed - database tracking is done via process checks
 
 const DB_DATA_DIR = process.env.DB_DATA_DIR || `${process.env.HOME}/hostpanel-dbs`;
-const SQLITE_DB_PATH = path.join(process.env.PROJECTS_DIR || `${process.env.HOME}/hostpanel-projects`, 'processes.db');
-
 fs.mkdirSync(DB_DATA_DIR, { recursive: true });
-
-// We share the same processes.db for audit or state if needed, but for DBs we can track dynamically 
-// or just rely on process checking (pgrep/netstat).
-function getSQLite() {
-  return new Database(SQLITE_DB_PATH);
-}
 
 const SUPPORTED_DBS = {
   mariadb: {
