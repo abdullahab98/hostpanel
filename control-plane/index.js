@@ -51,13 +51,17 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error', details: err.message });
 });
 
-const PORT = process.env.PORT || 3001;
+let PORT = parseInt(process.env.PORT || '3001', 10);
+if (PORT === 3000) {
+  console.warn('⚠️  PORT=3000 is reserved for user applications! Auto-switching Control Plane to port 3001.');
+  PORT = 3001;
+}
 
 // Initialize DB then start
 initDb().then(() => {
-  server.listen(PORT, '0.0.0.0', () => {
+  server.listen(PORT, () => {
     console.log(`\n🚀 HostPanel Control Plane v3.0 (Android Native)`);
-    console.log(`   Listening on port ${PORT} (0.0.0.0)`);
+    console.log(`   Listening on port ${PORT} (dual-stack IPv4/IPv6)`);
     console.log(`   Projects dir: ${process.env.PROJECTS_DIR || '~/hostpanel-projects'}\n`);
   });
 }).catch(err => {
