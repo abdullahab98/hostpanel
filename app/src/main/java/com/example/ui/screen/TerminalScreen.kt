@@ -15,15 +15,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.viewinterop.AndroidView
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TerminalScreen() {
     val context = LocalContext.current
+    val settings = remember { com.example.data.datastore.SettingsDataStore(context) }
+    val apiKey by settings.apiKey.collectAsState(initial = "hostpanel-local")
+    val themeMode by settings.themeMode.collectAsState(initial = "dark")
     
     // We will inject a full HTML page with xterm.js loaded from CDN
     // It will connect to our local control plane's WebSocket
-    val htmlContent = remember {
+    val htmlContent = remember(apiKey, themeMode) {
+        val bg = if (themeMode == "light") "#FFFFFF" else "#000000"
+        val fg = if (themeMode == "light") "#121824" else "#FFFFFF"
         """
         <!DOCTYPE html>
         <html>
@@ -35,7 +43,7 @@ fun TerminalScreen() {
             <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
             <style>
-                body { margin: 0; padding: 0; background-color: #000; overflow: hidden; height: 100vh; width: 100vw; }
+                body { margin: 0; padding: 0; background-color: $bg; overflow: hidden; height: 100vh; width: 100vw; }
                 #terminal-container { height: 100%; width: 100%; padding: 4px; }
                 .xterm .xterm-viewport { overflow-y: auto !important; }
             </style>
@@ -45,7 +53,7 @@ fun TerminalScreen() {
             <script>
                 var term = new Terminal({
                     cursorBlink: true,
-                    theme: { background: '#000000' },
+                    theme: { background: '$bg', foreground: '$fg' },
                     fontSize: 14,
                     fontFamily: 'monospace'
                 });
@@ -54,8 +62,7 @@ fun TerminalScreen() {
                 term.open(document.getElementById('terminal-container'));
                 fitAddon.fit();
                 
-                // Retrieve API key from localStorage if injected, else default
-                var apiKey = 'hostpanel-local';
+                var apiKey = '$apiKey';
                 
                 var ws = new WebSocket('ws://localhost:3001/ws/terminal?token=' + apiKey + '&cols=' + term.cols + '&rows=' + term.rows);
                 

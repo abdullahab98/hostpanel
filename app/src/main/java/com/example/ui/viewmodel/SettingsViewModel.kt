@@ -18,6 +18,7 @@ data class SettingsUiState(
     val isTunnelEnabled: Boolean = false,
     val serverDomain: String = "",
     val autoRefresh: Boolean = true,
+    val themeMode: String = "dark",
     val connectionStatus: ConnectionStatus = ConnectionStatus.UNCHECKED,
     val message: String? = null
 )
@@ -67,6 +68,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 _uiState.value = _uiState.value.copy(autoRefresh = v)
             }
         }
+        viewModelScope.launch {
+            settings.themeMode.collect { v ->
+                _uiState.value = _uiState.value.copy(themeMode = v)
+            }
+        }
     }
 
     fun setServerUrl(url: String) { _uiState.value = _uiState.value.copy(serverUrl = url) }
@@ -76,6 +82,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setTunnelEnabled(enabled: Boolean) { _uiState.value = _uiState.value.copy(isTunnelEnabled = enabled) }
     fun setServerDomain(domain: String) { _uiState.value = _uiState.value.copy(serverDomain = domain) }
     fun setAutoRefresh(enabled: Boolean) { _uiState.value = _uiState.value.copy(autoRefresh = enabled) }
+    fun setThemeMode(mode: String) { _uiState.value = _uiState.value.copy(themeMode = mode) }
 
     fun save() {
         viewModelScope.launch {
@@ -87,6 +94,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             settings.setTunnelEnabled(state.isTunnelEnabled)
             settings.saveServerDomain(state.serverDomain)
             settings.setAutoRefresh(state.autoRefresh)
+            settings.saveThemeMode(state.themeMode)
             _uiState.value = _uiState.value.copy(message = "✓ Settings saved")
         }
     }

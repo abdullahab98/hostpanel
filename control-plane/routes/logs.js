@@ -27,6 +27,20 @@ router.get('/containers/:name/logs', auth, (req, res) => {
   }
 });
 
+// HTTP endpoint: download full log file
+router.get('/containers/:name/logs/download', auth, (req, res) => {
+  try {
+    const logFile = path.join(svc.projectDir(req.params.name), 'hostpanel.log');
+    if (!fs.existsSync(logFile)) {
+      return res.status(404).json({ error: 'Log file not found' });
+    }
+    res.download(logFile, `${req.params.name}-hostpanel.log`);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // WebSocket log streaming — called from index.js with the wss instance
 function setupLogWebSocket(wss) {
   wss.on('connection', (ws, req) => {

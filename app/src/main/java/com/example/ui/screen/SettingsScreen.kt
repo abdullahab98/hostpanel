@@ -174,12 +174,33 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Column(Modifier.weight(1f)) {
-                            Text("Auto-Refresh Metrics", fontWeight = FontWeight.Medium)
-                            Text("Refresh every 15 seconds", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Column(Modifier.padding(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                Text("Auto-Refresh Metrics", fontWeight = FontWeight.Medium)
+                                Text("Refresh every 15 seconds", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                            Switch(checked = state.autoRefresh, onCheckedChange = viewModel::setAutoRefresh)
                         }
-                        Switch(checked = state.autoRefresh, onCheckedChange = viewModel::setAutoRefresh)
+                        
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                        
+                        Text("Theme Mode", fontWeight = FontWeight.Medium)
+                        Spacer(Modifier.height(8.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                            val modes = listOf("dark" to "Dark", "light" to "Light", "system" to "System")
+                            modes.forEach { (mode, label) ->
+                                FilterChip(
+                                    selected = state.themeMode == mode,
+                                    onClick = { viewModel.setThemeMode(mode) },
+                                    label = { Text(label) },
+                                    leadingIcon = if (state.themeMode == mode) {
+                                        { Icon(Icons.Default.Check, null, modifier = Modifier.size(16.dp)) }
+                                    } else null,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
                     }
                 }
                 Spacer(Modifier.height(24.dp))

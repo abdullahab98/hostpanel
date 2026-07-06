@@ -25,8 +25,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val settings = com.example.data.datastore.SettingsDataStore(this)
         setContent {
-            MyApplicationTheme {
+            val themeMode by settings.themeMode.collectAsState(initial = "dark")
+            MyApplicationTheme(themeMode = themeMode) {
                 HostPanelApp()
             }
         }

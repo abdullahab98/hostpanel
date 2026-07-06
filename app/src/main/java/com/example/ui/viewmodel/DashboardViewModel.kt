@@ -28,6 +28,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val settings = SettingsDataStore(application)
     private val metricsRepo = MetricsRepository(settings)
     private val domainRepo = DomainRepository(settings)
+    private val notifier = com.example.utils.NotificationHelper(application)
+    private var lastNotifiedLogId: String? = null
 
     private val _uiState = MutableStateFlow(DashboardUiState(isLoading = true))
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
@@ -56,6 +58,14 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             // Also load recent audit logs
             domainRepo.getAuditLogs().onSuccess { logs ->
                 _uiState.value = _uiState.value.copy(recentLogs = logs.take(5))
+                logs.firstOrNull()?.let { latest ->
+                    if (latest.id != lastNotifiedLogId) {
+                        if (lastNotifiedLogId != null && (latest.status == "FAILURE" || latest.action.contains("RESTART", true) || latest.action.contains("CRASH", true) || latest.details.contains("crash", true))) {
+                            notifier.showServerAlert("⚠️ Server Alert: ${latest.target}", "${latest.action}: ${latest.details.ifEmpty { "Process status changed" }}")
+                        }
+                        lastNotifiedLogId = latest.id
+                    }
+                }
             }
         }
     }

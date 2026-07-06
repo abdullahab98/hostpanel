@@ -23,6 +23,7 @@ class SettingsDataStore(private val context: Context) {
         val SERVER_DOMAIN = stringPreferencesKey("server_domain")
         val AUTO_REFRESH = booleanPreferencesKey("auto_refresh")
         val TUNNEL_URL = stringPreferencesKey("tunnel_url")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
     }
 
     val serverUrl: Flow<String> = context.dataStore.data.map { prefs ->
@@ -57,6 +58,10 @@ class SettingsDataStore(private val context: Context) {
         prefs[TUNNEL_URL] ?: ""
     }
 
+    val themeMode: Flow<String> = context.dataStore.data.map { prefs ->
+        prefs[THEME_MODE] ?: "dark"
+    }
+
     suspend fun saveServerUrl(url: String) {
         context.dataStore.edit { prefs -> prefs[SERVER_URL] = url }
     }
@@ -88,4 +93,9 @@ class SettingsDataStore(private val context: Context) {
     suspend fun saveTunnelUrl(url: String) {
         context.dataStore.edit { prefs -> prefs[TUNNEL_URL] = url }
     }
+
+    suspend fun saveThemeMode(mode: String) {
+        context.dataStore.edit { prefs -> prefs[THEME_MODE] = mode }
+    }
 }
+

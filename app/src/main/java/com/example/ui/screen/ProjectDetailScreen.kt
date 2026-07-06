@@ -140,6 +140,23 @@ fun ProjectDetailScreen(
                                         Spacer(Modifier.width(8.dp))
                                         CircularProgressIndicator(modifier = Modifier.size(10.dp), strokeWidth = 1.5.dp, color = Color(0xFF10B981))
                                     }
+                                    Spacer(Modifier.weight(1f))
+                                    IconButton(
+                                        onClick = {
+                                            val logText = state.logs.joinToString("\n")
+                                            val sendIntent: Intent = Intent().apply {
+                                                action = Intent.ACTION_SEND
+                                                putExtra(Intent.EXTRA_TEXT, logText.ifEmpty { "No logs available" })
+                                                type = "text/plain"
+                                                putExtra(Intent.EXTRA_TITLE, "$projectName logs")
+                                            }
+                                            val shareIntent = Intent.createChooser(sendIntent, "Export Logs")
+                                            context.startActivity(shareIntent)
+                                        },
+                                        modifier = Modifier.size(24.dp)
+                                    ) {
+                                        Icon(Icons.Default.Share, "Share Logs", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
+                                    }
                                 }
                                 LogConsole(logs = state.logs, modifier = Modifier.fillMaxSize())
                             }
